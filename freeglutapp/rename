@@ -1,0 +1,412 @@
+
+#include <iostream>
+#include <cassert>
+#include <stdlib.h>
+#include <vector>
+#include "app_window.h"
+
+using namespace std;
+
+
+
+
+float randX1 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randY1 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randWidth1 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randHeight1 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+
+float randX2 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randY2 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randWidth2 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randHeight2 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+
+float randX3 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randY3 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randWidth3 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randHeight3 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+
+float randX4 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randY4 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randWidth4 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+float randHeight4 = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+
+float r1 = ((float(rand()) / float(RAND_MAX)));
+float r2 = ((float(rand()) / float(RAND_MAX)));
+float r3 = ((float(rand()) / float(RAND_MAX)));
+float r4 = ((float(rand()) / float(RAND_MAX)));
+
+float g1 = ((float(rand()) / float(RAND_MAX)));
+float g2 = ((float(rand()) / float(RAND_MAX)));
+float g3 = ((float(rand()) / float(RAND_MAX)));
+float g4 = ((float(rand()) / float(RAND_MAX)));
+
+float b1 = ((float(rand()) / float(RAND_MAX)));
+float b2 = ((float(rand()) / float(RAND_MAX)));
+float b3 = ((float(rand()) / float(RAND_MAX)));
+float b4 = ((float(rand()) / float(RAND_MAX)));
+
+Rect rc1(randX1, randY1, randWidth1, randHeight1, r1, g1, b1);
+Rect rc2(randX2, randY2, randWidth2, randHeight2, r2, g2, b2);
+Rect rc3(randX3, randY3, randWidth3, randHeight3, r3, g3, b3);
+Rect rc4(randX4, randY4, randWidth4, randHeight4, r4, g4, b4);
+
+Rect* rect1 = &rc1;
+Rect* rect2 = &rc2;
+Rect* rect3 = &rc3;
+Rect* rect4 = &rc4;
+
+
+
+void randomize(vector<Rect*> st) {
+  for (int i = 0; i < st.size(); i++) {
+    st[i]->x = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+    st[i]->y = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+    st[i]->width = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+     st[i]->height = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+
+     st[i]->r = ((float(rand()) / float(RAND_MAX)));
+    st[i]->g = ((float(rand()) / float(RAND_MAX)));
+     st[i]->b = ((float(rand()) / float(RAND_MAX)));
+  }
+}
+
+void initialize(vector<Rect*> st) {
+  if (st[0]->initialized == 1) {
+  } else {
+    cout << "INITIALIZED = 0" << endl;
+    st.push_back(rect1);
+    st.push_back(rect2);
+    st.push_back(rect3);
+    st.push_back(rect4);
+
+    cout << "SIZE: " << st.size() << endl;
+
+    st[0].initialized = 1;
+  }
+}
+
+// END OF RECTSTASH
+
+AppWindow::AppWindow(const char* label, int x, int y, int w, int h)
+: GlutWindow(label, x, y, w, h) {
+  _markx = 0;
+  _marky = 0;
+  width = 0.5;
+  addMenuEntry("Option 0", evOption0);
+  addMenuEntry("Option 1", evOption1);
+}
+
+// mouse events are in window coordinates, but your scene is in [0,1]x[0,1],
+// so make here the conversion when needed
+void AppWindow::windowToScene(float& x, float& y) {
+  x = (2.0f * (x / float(_w))) - 1.0f;
+  y = 1.0f - (2.0f * (y / float(_h)));
+}
+
+// Called every time there is a window event
+
+void AppWindow::handle(const Event& e) {
+  bool rd = true;
+
+  if (e.type == Keyboard) switch (e.key) {
+      case ' ':  // space bar
+      std::cout << "Space pressed.\n";
+      _markx = 0;
+      _marky = 0;
+        // redraw();
+      break;
+
+      case 'r':  // r button, randomize
+      stash.randomized = 0;
+      _markx = 0;
+      _marky = 0;
+      redraw();
+
+      break;
+
+      case 'q':
+      rect1.width = rect1.width + 0.1;
+      break;
+
+      case 'a':
+
+      break;
+
+      case 27:  // Esc was pressed
+      exit(1);
+    }
+
+    if (e.type == MouseDown || e.type == Motion) {
+      _markx = (float)e.mx;
+      _marky = (float)e.my;
+      windowToScene(_markx, _marky);
+
+      int selected = 0;
+      int index = 0;
+      float r;
+      float b;
+      float g;
+
+      if (e.type == MouseDown) {
+        for (int i = 0; i < stash.size(); i++) {
+          if (stash[i]->contains(_markx, _marky) == 1) {
+            index = i;
+            selected = 1;
+            r = stash[i]->r;
+            g = stash[i]->g;
+            b = stash[i]->b;
+
+
+/*
+          if (stash[i]->r < 1.0) stash[i]->r += 0.3;
+
+          if (stash[i]->g < 1.0) stash[i]->g += 0.3;
+
+          if (stash[i]->b < 1.0) stash[i]->b += 0.3;
+
+
+
+          */
+
+
+          stash[i]->r = 1.0;
+          stash[i]->g = 1.0;
+          stash[i]->b= 1.0;
+
+
+          Rect copy = stash[i];
+
+          stash.erase(stash.begin() + i);
+          stash.insert(stash.begin(), copy);
+
+          // stash[0]->r = r;
+          // stash[0]->g = g;
+          // stash[0]->b = b;
+
+         // cout << "SELECT INDEX: " << index << endl;
+
+          //cout << "Rect " << i + 1 << endl;
+
+          break;
+        }
+
+        // break;
+      }
+    }
+
+ 
+  
+
+    
+if(selected == 1){
+    stash[0]->x = _markx - (stash[0]->width * 0.5);
+    stash[0]->y = _marky - (stash[0]->height * 0.5);
+}
+
+
+if(e.type == MouseDown){
+
+
+}
+else {
+stash[0]->r = r;
+      stash[0]->g = g;
+      stash[0]->b = b;
+
+}
+   
+    
+
+
+  
+
+
+
+
+
+  }
+
+  // cout<<"x: "<<e.mx<<"  y: "<<(float)e.my<<endl;
+
+  if (e.type == Menu) {
+    std::cout << "Menu Event: " << e.menuev << std::endl;
+
+    rd = false;  // no need to redraw
+  }
+
+  const float incx = 0.02f;
+  const float incy = 0.02f;
+  if (e.type == SpecialKey) switch (e.key) {
+    case GLUT_KEY_LEFT:
+    _markx -= incx;
+    break;
+    case GLUT_KEY_RIGHT:
+    _markx += incx;
+    break;
+    case GLUT_KEY_UP:
+    _marky += incy;
+    break;
+    case GLUT_KEY_DOWN:
+    _marky -= incy;
+    break;
+    default:
+        rd = false;  // no redraw
+      }
+
+  if (rd) redraw();  // ask the window to be rendered when possible
+}
+
+void AppWindow::resize(int w, int h) {
+  // Define that OpenGL should use the whole window for rendering
+  glViewport(0, 0, w, h);
+  _w = w;
+  _h = h;
+}
+
+// here we will redraw the scene according to the current state of the
+// application.
+void AppWindow::draw() {
+  // Clear the rendering window
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Clear the trasnformation stack
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  // Set drawing color to yellow
+  glColor3d(1.0, 0.9, 0.3);
+
+  // Draw a cross
+  const double s = 0.05;
+  glBegin(GL_LINES);
+  glVertex2d(_markx - s, _marky);
+  glVertex2d(_markx + s, _marky);
+  glVertex2d(_markx, _marky - s);
+  glVertex2d(_markx, _marky + s);
+  glEnd();
+
+  // initialize(stash);
+
+  if (stash.initialized == 0) {
+    stash.push_back(rect1);
+    stash.push_back(rect2);
+    stash.push_back(rect3);
+    stash.push_back(rect4);
+
+    stash.initialized = 1;
+  }
+
+  // RECTANGLES START HERE
+
+  // DRAW RECTANGLE 1
+
+  if (stash.randomized == 0) {
+    for (int i = 0; i < stash.size(); i++) {
+      stash[i]->x = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+      stash[i]->y = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+      stash[i]->width = ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+      stash[i]->height =
+      ((float(rand()) / float(RAND_MAX)) * (1 - -1)) + -1;
+
+      stash[i]->r = ((float(rand()) / float(RAND_MAX)));
+      stash[i]->g = ((float(rand()) / float(RAND_MAX)));
+      stash[i]->b = ((float(rand()) / float(RAND_MAX)));
+    }
+
+    stash.randomized = 1;
+  }
+
+  if (stash[0]->height < 0) {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[0]->r, stash[0]->g, stash[0]->b);
+    glVertex2d(stash[0]->x, stash[0]->y);
+    glVertex2d(stash[0]->x + stash[0]->width, stash[0]->y);
+    glVertex2d(stash[0]->x + stash[0]->width,
+     stash[0]->y + stash[0]->height);
+    glVertex2d(stash[0]->x, stash[0]->y + stash[0]->height);
+    glEnd();
+
+  } else {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[0]->r, stash[0]->g, stash[0]->b);
+    glVertex2d(stash[0]->x, stash[0]->y);
+    glVertex2d(stash[0]->x + stash[0]->width, stash[0]->y);
+    glVertex2d(stash[0]->x + stash[0]->width,
+     stash[0]->y + stash[0]->height);
+    glVertex2d(stash[0]->x, stash[0]->y + stash[0]->height);
+    glEnd();
+  }
+
+  // DRAW RANDOM RECTANGLE 2
+  if (stash[1]->height < 0) {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[1]->r, stash[1]->g, stash[1]->b);
+    glVertex2d(stash[1]->x, stash[1]->y);
+    glVertex2d(stash[1]->x + stash[1]->width, stash[1]->y);
+    glVertex2d(stash[1]->x + stash[1]->width,
+     stash[1]->y + stash[1]->height);
+    glVertex2d(stash[1]->x, stash[1]->y + stash[1]->height);
+    glEnd();
+
+  } else {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[1]->r, stash[1]->g, stash[1]->b);
+    glVertex2d(stash[1]->x, stash[1]->y);
+    glVertex2d(stash[1]->x + stash[1]->width, stash[1]->y);
+    glVertex2d(stash[1]->x + stash[1]->width,
+     stash[1]->y + stash[1]->height);
+    glVertex2d(stash[1]->x, stash[1]->y + stash[1]->height);
+    glEnd();
+  }
+
+  // DRAW RANDOM RECTANGLE 3
+
+  if (stash[2]->height < 0) {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[2]->r, stash[2]->g, stash[2]->b);
+    glVertex2d(stash[2]->x, stash[2]->y);
+    glVertex2d(stash[2]->x + stash[2]->width, stash[2]->y);
+    glVertex2d(stash[2]->x + stash[2]->width,
+     stash[2]->y + stash[2]->height);
+    glVertex2d(stash[2]->x, stash[2]->y + stash[2]->height);
+    glEnd();
+
+  } else {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[2]->r, stash[2]->g, stash[2]->b);
+    glVertex2d(stash[2]->x, stash[2]->y);
+    glVertex2d(stash[2]->x + stash[2]->width, stash[2]->y);
+    glVertex2d(stash[2]->x + stash[2]->width,
+     stash[2]->y + stash[2]->height);
+    glVertex2d(stash[2]->x, stash[2]->y + stash[2]->height);
+    glEnd();
+  }
+
+  // DRAW RANDOM RECTANGLE 4
+
+  if (stash[3]->height < 0) {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[3]->r, stash[3]->g, stash[3]->b);
+    glVertex2d(stash[3]->x, stash[3]->y);
+    glVertex2d(stash[3]->x + stash[3]->width, stash[3]->y);
+    glVertex2d(stash[3]->x + stash[3]->width,
+     stash[3]->y + stash[3]->height);
+    glVertex2d(stash[3]->x, stash[3]->y + stash[3]->height);
+    glEnd();
+
+  } else {
+    glBegin(GL_POLYGON);
+    glColor3f(stash[3]->r, stash[3]->g, stash[3]->b);
+    glVertex2d(stash[3]->x, stash[3]->y);
+    glVertex2d(stash[3]->x + stash[3]->width, stash[3]->y);
+    glVertex2d(stash[3]->x + stash[3]->width,
+     stash[3]->y + stash[3]->height);
+    glVertex2d(stash[3]->x, stash[3]->y + stash[3]->height);
+    glEnd();
+  }
+
+  // Swap buffers
+  glFlush();          // flush the pipeline (usually not necessary)
+  glutSwapBuffers();  // we were drawing to the back buffer, now bring it to the
+                      // front
+}
