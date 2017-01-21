@@ -14,7 +14,6 @@ Lab and Project code for Object Oriented Programming (CSE 165) at UC Merced, Spr
   $ make clean
   $ make
   $ ./glutapp
-
 ```
 
 ------
