@@ -15,7 +15,6 @@ Lab and Project code for Object Oriented Programming (CSE 165) at UC Merced, Spr
   $ make
   $ ./glutapp
 
-  
 ```
 
 ------
@@ -24,5 +23,4 @@ Lab and Project code for Object Oriented Programming (CSE 165) at UC Merced, Spr
 
 ## Screenshot
 
-
-![Screenshot from 2017-01-19 22-52-19.png]({{site.baseurl}}/Screenshot from 2017-01-19 22-52-19.png)
+![In Game](https://raw.githubusercontent.com/ringmaj/CSE-165-Projects/master/Screenshots/1.png)
