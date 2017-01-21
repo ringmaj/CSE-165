@@ -1,0 +1,4 @@
+3
+A Diego 6
+D Snoopy 3
+D Beethoven 5
