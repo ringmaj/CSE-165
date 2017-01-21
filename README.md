@@ -22,6 +22,6 @@ Lab and Project code for Object Oriented Programming (CSE 165) at UC Merced, Spr
 
 ## Screenshot
 
-<img src="https://raw.githubusercontent.com/ringmaj/CSE-165-Projects/master/Screenshots/1.png"> 
+<img src="https://raw.githubusercontent.com/ringmaj/CSE-165-Projects/master/Screenshots/1.png" style="max-width:100%;"> 
 
 
